@@ -1,0 +1,41 @@
+@import "tailwindcss";
+
+body {
+  color: white;
+  background-image: linear-gradient(
+    to right top,
+    #4a154b,
+    #3f114b,
+    #320e4c,
+    #230d4c,
+    #0a0c4c
+  );
+}
+html,
+body {
+  overflow-x: hidden;
+  height: 100%;
+  margin: 0;
+  padding: 0;
+}
+
+.footer-link {
+  transition: all 0.3s ease;
+}
+.footer-link:hover {
+  color: #f5f3b3;
+  transform: translateX(5px);
+}
+.social-icon {
+  transition: all 0.3s ease;
+}
+.social-icon:hover {
+  transform: translateY(-3px) scale(1.1);
+}
+
+.line-clamp-3 {
+  display: -webkit-box;
+  -webkit-line-clamp: 3;
+  -webkit-box-orient: vertical;
+  overflow: hidden;
+}
