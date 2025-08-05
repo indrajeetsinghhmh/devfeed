@@ -21,7 +21,7 @@ exports.createPost = async (req, res) => {
     });
 
     await post.save();
-
+  this.deletePost();
     res.status(201).json({ message: "Post created", post });
   } catch (err) {
     console.error("Post creation failed:", err);
