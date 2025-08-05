@@ -13,11 +13,6 @@ exports.createPost = async (req, res) => {
     }
 
     const post = new Post({
-      title,
-      content,
-      tags: tags ? JSON.parse(tags) : [],
-      image: imageUrl,
-      createdBy: req.user.userId,
     });
 
     await post.save();
