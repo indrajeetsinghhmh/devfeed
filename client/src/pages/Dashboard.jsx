@@ -117,7 +117,7 @@ const Dashboard = () => {
               <h3 className="text-lg font-semibold text-gray-700">Links</h3>
               <ul className="mt-2 space-y-2">
                 {user.links.map((link, index) => (
-                  <li>
+                  <li key={index}>
                     <a
                       href={link.url}
                       target="_blank"

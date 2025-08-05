@@ -1,10 +1,12 @@
 import { useEffect, useState } from "react";
 import { useNavigate } from "react-router-dom";
 import axios from "../utils/axios";
+import { toast } from "react-toastify";
 
 const EditProfile = () => {
   const navigate = useNavigate();
   const userData = JSON.parse(localStorage.getItem("user"));
+  const [loading, setLoading] = useState(false);
 
   const [form, setForm] = useState({
     name: userData?.name || "",
@@ -35,6 +37,7 @@ const EditProfile = () => {
 
   const handleSubmit = async (e) => {
     e.preventDefault();
+    setLoading(true);
     const formData = new FormData();
     formData.append("name", form.name);
     formData.append("username", form.username);
@@ -55,11 +58,13 @@ const EditProfile = () => {
         },
       });
       localStorage.setItem("user", JSON.stringify(res.data.user));
-      alert("Profile updated successfully");
+      toast.success("Profile updated successfully");
       navigate("/dashboard");
     } catch (err) {
       console.error(err);
       alert(err.response?.data?.message || "Profile update failed");
+    } finally {
+      setLoading(false);
     }
   };
 
@@ -87,6 +92,7 @@ const EditProfile = () => {
                 accept="image/*"
                 onChange={handleAvatarChange}
                 className="shadow appearance-none border rounded w-full py-2 px-3 text-gray-700 leading-tight focus:outline-none focus:shadow-outline"
+                disabled={loading}
               />
             </div>
 
@@ -114,7 +120,8 @@ const EditProfile = () => {
                     onChange={handleChange}
                     placeholder={`Enter your ${field}`}
                     className="shadow appearance-none border rounded w-full py-2 px-3 text-gray-700 leading-tight focus:outline-none focus:shadow-outline"
-                    required={field !== "bio"}
+                    required={field !== "bio" && field !== "skills"}
+                    disabled={loading}
                   />
                 )}
               </div>
@@ -135,7 +142,7 @@ const EditProfile = () => {
                       handleLinkChange(index, "platform", e.target.value)
                     }
                     className="shadow appearance-none border rounded w-full py-2 px-3 text-gray-700 leading-tight focus:outline-none focus:shadow-outline"
-                    required
+                    disabled={loading}
                   />
                   <input
                     type="text"
@@ -145,7 +152,7 @@ const EditProfile = () => {
                       handleLinkChange(index, "url", e.target.value)
                     }
                     className="shadow appearance-none border rounded w-full py-2 px-3 text-gray-700 leading-tight focus:outline-none focus:shadow-outline"
-                    required
+                    disabled={loading}
                   />
                 </div>
               ))}
@@ -153,6 +160,7 @@ const EditProfile = () => {
                 type="button"
                 onClick={addLinkField}
                 className="text-blue-600 text-sm hover:underline mt-1 cursor-grab"
+                disabled={loading}
               >
                 + Add More
               </button>
@@ -160,9 +168,34 @@ const EditProfile = () => {
 
             <button
               type="submit"
-              className="bg-blue-600 text-white py-2 rounded hover:bg-blue-800 transition-all cursor-pointer"
+              className={`bg-blue-600 text-white py-2 rounded hover:bg-blue-800 transition-all cursor-pointer flex justify-center items-center ${
+                loading ? "opacity-50 cursor-not-allowed" : ""
+              }`}
+              disabled={loading}
             >
-              Save Changes
+              {loading && (
+                <svg
+                  className="animate-spin h-5 w-5 mr-2 text-white"
+                  xmlns="http://www.w3.org/2000/svg"
+                  fill="none"
+                  viewBox="0 0 24 24"
+                >
+                  <circle
+                    className="opacity-25"
+                    cx="12"
+                    cy="12"
+                    r="10"
+                    stroke="currentColor"
+                    strokeWidth="4"
+                  ></circle>
+                  <path
+                    className="opacity-75"
+                    fill="currentColor"
+                    d="M4 12a8 8 0 018-8v8z"
+                  ></path>
+                </svg>
+              )}
+              {loading ? "Saving..." : "Save Changes"}
             </button>
           </form>
         </div>

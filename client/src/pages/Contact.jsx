@@ -2,6 +2,7 @@ import { Link } from "react-router-dom";
 import Footer from "../components/Footer";
 import Navbar from "../components/Navbar";
 import { useState } from "react";
+import { toast } from "react-toastify"; 
 
 const Contact = () => {
   const [formData, setFormData] = useState({
@@ -11,7 +12,7 @@ const Contact = () => {
     message: "",
   });
 
-  const [submitted, setSubmitted] = useState(false);
+  const [loading, setLoading] = useState(false);
 
   const handleChange = (e) => {
     setFormData((prev) => ({ ...prev, [e.target.name]: e.target.value }));
@@ -19,6 +20,7 @@ const Contact = () => {
 
   const handleSubmit = (e) => {
     e.preventDefault();
+    setLoading(true);
     const url =
       "https://script.google.com/macros/s/AKfycby_Xg7avfPdmyy5c3SaYXI57v4G4YRnbBHX2gqcbIqBV63q-Yn73xLfkBHg-Gk9s-DJ/exec";
 
@@ -36,15 +38,14 @@ const Contact = () => {
     })
       .then((res) => res.text())
       .then(() => {
-        setSubmitted(true);
         setFormData({ name: "", email: "", subject: "", message: "" }); // clear form inputs
-
-        // Optionally, hide the success message after 3 seconds
-        setTimeout(() => setSubmitted(false), 3000);
+        toast.success("Message sent successfully!");
       })
       .catch((err) => {
-        console.log(err);
-        // Optionally, handle error state here
+        toast.error("Failed to send message. Please try again.");
+      })
+      .finally(() => {
+        setLoading(false);
       });
   };
 
@@ -76,8 +77,9 @@ const Contact = () => {
               <label
                 className="block text-gray-700 text-sm font-bold mb-2"
                 htmlFor="name"
+              >
                 Name
-              ></label>
+              </label>
               <input
                 id="name"
                 name="name"
@@ -87,6 +89,7 @@ const Contact = () => {
                 placeholder="Your Name"
                 className="shadow appearance-none border rounded w-full py-2 px-3 text-gray-700 leading-tight focus:outline-none focus:shadow-outline"
                 required
+                disabled={loading}
               />
             </div>
 
@@ -106,6 +109,7 @@ const Contact = () => {
                 placeholder="your.email@example.com"
                 className="shadow appearance-none border rounded w-full py-2 px-3 text-gray-700 leading-tight focus:outline-none focus:shadow-outline"
                 required
+                disabled={loading}
               />
             </div>
 
@@ -125,21 +129,42 @@ const Contact = () => {
                 placeholder="Your message..."
                 className="shadow appearance-none border rounded w-full py-2 px-3 text-gray-700 leading-tight focus:outline-none focus:shadow-outline"
                 required
+                disabled={loading}
               ></textarea>
             </div>
 
             <button
               type="submit"
-              className="bg-blue-600 hover:bg-blue-700 text-white py-2 px-4 rounded focus:outline-none focus:shadow-outline transition"
+              disabled={loading}
+              className={`bg-blue-600 hover:bg-blue-700 text-white py-2 px-4 rounded focus:outline-none focus:shadow-outline transition ${
+                loading ? "opacity-50 cursor-not-allowed" : ""
+              } flex justify-center items-center`}
             >
-              Send Message
+              {loading && (
+                <svg
+                  className="animate-spin h-5 w-5 mr-2 text-white"
+                  xmlns="http://www.w3.org/2000/svg"
+                  fill="none"
+                  viewBox="0 0 24 24"
+                >
+                  <circle
+                    className="opacity-25"
+                    cx="12"
+                    cy="12"
+                    r="10"
+                    stroke="currentColor"
+                    strokeWidth="4"
+                  ></circle>
+                  <path
+                    className="opacity-75"
+                    fill="currentColor"
+                    d="M4 12a8 8 0 018-8v8z"
+                  ></path>
+                </svg>
+              )}
+              {loading ? "Sending..." : "Send Message"}
             </button>
           </form>
-          {submitted && (
-            <p className="text-green-600 font-semibold mb-4 mx-auto text-center mt-4">
-              Sent successfully!
-            </p>
-          )}
         </div>
 
         {/* Contact Info Section */}

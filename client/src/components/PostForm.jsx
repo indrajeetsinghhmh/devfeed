@@ -1,11 +1,11 @@
 import React, { useState } from "react";
-import axios from "axios";
 import API from "../api";
 import { useNavigate } from "react-router-dom";
+import { toast } from "react-toastify";
 
 const PostForm = () => {
   const navigate = useNavigate();
-  
+
   const [formData, setFormData] = useState({
     title: "",
     content: "",
@@ -13,6 +13,8 @@ const PostForm = () => {
   });
   const [image, setImage] = useState(null);
   const [preview, setPreview] = useState(null);
+  const [loading, setLoading] = useState(false); // loader state
+
   const token = localStorage.getItem("token");
 
   const handleChange = (e) => {
@@ -34,22 +36,33 @@ const PostForm = () => {
 
   const handleSubmit = async (e) => {
     e.preventDefault();
+    setLoading(true);
     const postData = new FormData();
     postData.append("title", formData.title);
     postData.append("content", formData.content);
-    postData.append("tags", JSON.stringify(formData.tags.split(",")));
+    postData.append(
+      "tags",
+      JSON.stringify(formData.tags.split(",").map((t) => t.trim()))
+    );
     if (image) postData.append("image", image);
 
     try {
-      await API.post("/posts/create", postData);
-      alert("Post created!");
+      await API.post("/posts/create", postData, {
+        headers: {
+          Authorization: `Bearer ${token}`,
+          // "Content-Type" is automatically set to multipart/form-data with FormData
+        },
+      });
+      toast.success("Post created!");
       setFormData({ title: "", content: "", tags: "" });
       setImage(null);
       setPreview(null);
-      navigate("/posts")
+      navigate("/posts");
     } catch (error) {
-      alert("Error creating post");
+      toast.error("Error creating post");
       console.error(error);
+    } finally {
+      setLoading(false);
     }
   };
 
@@ -66,6 +79,7 @@ const PostForm = () => {
         rows={4}
         className="w-full p-2 border rounded"
         required
+        disabled={loading}
       />
       <input
         type="text"
@@ -74,6 +88,7 @@ const PostForm = () => {
         value={formData.tags}
         onChange={handleChange}
         className="w-full p-2 border rounded"
+        disabled={loading}
       />
       <label
         htmlFor="imageInput"
@@ -97,13 +112,39 @@ const PostForm = () => {
         onChange={handleImageSelect}
         className="hidden"
         id="imageInput"
+        disabled={loading}
       />
 
       <button
         type="submit"
-        className="w-full bg-blue-600 text-white py-2 rounded hover:bg-blue-700"
+        disabled={loading}
+        className={`w-full bg-blue-600 text-white py-2 rounded hover:bg-blue-700 flex justify-center items-center ${
+          loading ? "opacity-50 cursor-not-allowed" : ""
+        }`}
       >
-        Post
+        {loading && (
+          <svg
+            className="animate-spin h-5 w-5 mr-2 text-white"
+            xmlns="http://www.w3.org/2000/svg"
+            fill="none"
+            viewBox="0 0 24 24"
+          >
+            <circle
+              className="opacity-25"
+              cx="12"
+              cy="12"
+              r="10"
+              stroke="currentColor"
+              strokeWidth="4"
+            ></circle>
+            <path
+              className="opacity-75"
+              fill="currentColor"
+              d="M4 12a8 8 0 018-8v8z"
+            ></path>
+          </svg>
+        )}
+        {loading ? "Posting..." : "Post"}
       </button>
     </form>
   );

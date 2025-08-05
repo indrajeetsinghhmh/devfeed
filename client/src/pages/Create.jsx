@@ -1,6 +1,5 @@
 import React from "react";
 import PostForm from "../components/PostForm";
-import Feeds from "../components/Feeds";
 import Navbar2 from "../components/Navbar2";
 
 const Create = () => {

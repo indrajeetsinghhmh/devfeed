@@ -2,7 +2,7 @@ import { useState, useEffect, useRef } from "react";
 import axios from "../utils/axios";
 import truncate from "lodash/truncate";
 
-const PostCard = ({ post, onPostDeleted }) => {
+const PostCard = ({ post, onPostDeleted, currentTime }) => {
   const [liked, setLiked] = useState(false);
   const [likesCount, setLikesCount] = useState(post.likes?.length || 0);
   const [comment, setComment] = useState("");
@@ -92,8 +92,7 @@ const PostCard = ({ post, onPostDeleted }) => {
   };
 
   function timeAgo(date) {
-    const now = new Date();
-    const seconds = Math.floor((now - date) / 1000);
+    const seconds = Math.floor((currentTime - date) / 1000);
     const intervals = {
       year: 31536000,
       month: 2592000,
@@ -117,7 +116,7 @@ const PostCard = ({ post, onPostDeleted }) => {
   }
 
   function time() {
-    const date = new Date(post.createdAt);
+    const date = new Date(post.createdAt).getTime() || Date.now();
     return <div>{timeAgo(date)}</div>;
   }
 

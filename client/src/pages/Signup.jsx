@@ -1,6 +1,7 @@
 import { useState } from "react";
 import axios from "../utils/axios";
 import { useNavigate, Link } from "react-router-dom";
+import { toast } from "react-toastify";
 
 const Signup = () => {
   const navigate = useNavigate();
@@ -15,6 +16,7 @@ const Signup = () => {
 
   const [links, setLinks] = useState([{ platform: "", url: "" }]);
   const [avatar, setAvatar] = useState(null);
+  const [loading, setLoading] = useState(false);
 
   const handleChange = (e) => {
     setForm({ ...form, [e.target.name]: e.target.value });
@@ -37,6 +39,7 @@ const Signup = () => {
 
   const handleSubmit = async (e) => {
     e.preventDefault();
+    setLoading(true);
     const formData = new FormData();
 
     formData.append("name", form.name);
@@ -61,10 +64,12 @@ const Signup = () => {
 
       localStorage.setItem("token", res.data.token);
       localStorage.setItem("user", JSON.stringify(res.data.user));
-      alert("Signup successful!");
+      toast.success("Signup successful!");
       navigate("/posts");
     } catch (err) {
-      alert(err.response?.data?.message || "Signup failed");
+      toast.error(err.response?.data?.message || "Signup failed");
+    } finally {
+      setLoading(false);
     }
   };
 
@@ -92,44 +97,44 @@ const Signup = () => {
                 accept="image/*"
                 onChange={handleAvatarChange}
                 className="shadow appearance-none border rounded w-full py-2 px-3 text-gray-700 leading-tight focus:outline-none focus:shadow-outline"
+                disabled={loading}
               />
             </div>
 
             {/* Basic Inputs */}
-            {["name", "username", "email", "password"].map(
-              (field) => (
-                <div key={field} className="mb-4">
-                  <label className="block text-gray-700 text-sm font-bold mb-2">
-                    {field.charAt(0).toUpperCase() + field.slice(1)}
-                  </label>
-                  <input
-                    type={field === "password" ? "password" : "text"}
-                    name={field}
-                    value={form[field]}
-                    onChange={handleChange}
-                    placeholder={`${field} is required`}
-                    className="shadow appearance-none border rounded w-full py-2 px-3 text-gray-700 leading-tight focus:outline-none focus:shadow-outline"
-                    required
-                  />
-                </div>
-              )
-            )}
-            {["bio", "skills"].map(
-              (field) => (
-                <div key={field} className="mb-4">
-                  <label className="block text-gray-700 text-sm font-bold mb-2">
-                    {field.charAt(0).toUpperCase() + field.slice(1)}
-                  </label>
-                  <input
-                    type={field === "password" ? "password" : "text"}
-                    name={field}
-                    value={form[field]}
-                    onChange={handleChange}
-                    className="shadow appearance-none border rounded w-full py-2 px-3 text-gray-700 leading-tight focus:outline-none focus:shadow-outline"
-                  />
-                </div>
-              )
-            )}
+            {["name", "username", "email", "password"].map((field) => (
+              <div key={field} className="mb-4">
+                <label className="block text-gray-700 text-sm font-bold mb-2">
+                  {field.charAt(0).toUpperCase() + field.slice(1)}
+                </label>
+                <input
+                  type={field === "password" ? "password" : "text"}
+                  name={field}
+                  value={form[field]}
+                  onChange={handleChange}
+                  placeholder={`${field} is required`}
+                  autoComplete="current-password"
+                  className="shadow appearance-none border rounded w-full py-2 px-3 text-gray-700 leading-tight focus:outline-none focus:shadow-outline"
+                  required
+                  disabled={loading}
+                />
+              </div>
+            ))}
+            {["bio", "skills"].map((field) => (
+              <div key={field} className="mb-4">
+                <label className="block text-gray-700 text-sm font-bold mb-2">
+                  {field.charAt(0).toUpperCase() + field.slice(1)}
+                </label>
+                <input
+                  type={field === "password" ? "password" : "text"}
+                  name={field}
+                  value={form[field]}
+                  onChange={handleChange}
+                  className="shadow appearance-none border rounded w-full py-2 px-3 text-gray-700 leading-tight focus:outline-none focus:shadow-outline"
+                  disabled={loading}
+                />
+              </div>
+            ))}
 
             {/* Dynamic Links */}
             <div className="mb-4">
@@ -146,6 +151,7 @@ const Signup = () => {
                       handleLinkChange(index, "platform", e.target.value)
                     }
                     className="shadow appearance-none border rounded w-full py-2 px-3 text-gray-700 leading-tight focus:outline-none focus:shadow-outline"
+                    disabled={loading}
                   />
                   <input
                     type="text"
@@ -155,6 +161,7 @@ const Signup = () => {
                       handleLinkChange(index, "url", e.target.value)
                     }
                     className="shadow appearance-none border rounded w-full py-2 px-3 text-gray-700 leading-tight focus:outline-none focus:shadow-outline"
+                    disabled={loading}
                   />
                 </div>
               ))}
@@ -162,6 +169,7 @@ const Signup = () => {
                 type="button"
                 onClick={addMoreLinks}
                 className="text-blue-600 text-sm hover:underline mt-1 cursor-grab"
+                disabled={loading}
               >
                 + Add More
               </button>
@@ -169,9 +177,34 @@ const Signup = () => {
 
             <button
               type="submit"
-              className="bg-blue-600 text-white py-2 rounded hover:bg-blue-800 transition-all cursor-pointer"
+              className={`bg-blue-600 text-white py-2 rounded hover:bg-blue-800 transition-all cursor-pointer flex justify-center items-center ${
+                loading ? "opacity-50 cursor-not-allowed" : ""
+              }`}
+              disabled={loading}
             >
-              Create Account
+              {loading ? (
+                <svg
+                  className="animate-spin h-5 w-5 mr-3 text-white"
+                  xmlns="http://www.w3.org/2000/svg"
+                  fill="none"
+                  viewBox="0 0 24 24"
+                >
+                  <circle
+                    className="opacity-25"
+                    cx="12"
+                    cy="12"
+                    r="10"
+                    stroke="currentColor"
+                    strokeWidth="4"
+                  ></circle>
+                  <path
+                    className="opacity-75"
+                    fill="currentColor"
+                    d="M4 12a8 8 0 018-8v8z"
+                  ></path>
+                </svg>
+              ) : null}
+              {loading ? "Creating Account..." : "Create Account"}
             </button>
 
             <p className="text-center text-gray-600">

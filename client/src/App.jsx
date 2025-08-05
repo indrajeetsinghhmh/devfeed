@@ -10,6 +10,9 @@ import Posts from "./pages/Posts";
 import Create from "./pages/Create";
 import MyPosts from "./pages/MyPosts";
 import EditProfile from "./pages/EditProfile";
+import { ToastContainer } from "react-toastify";
+import "react-toastify/dist/ReactToastify.css";
+
 
 function App() {
   return (
@@ -27,6 +30,7 @@ function App() {
 
         <Route path="/" element={<Home />} />
       </Routes>
+      <ToastContainer />
     </Router>
   );
 }

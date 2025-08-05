@@ -1,10 +1,12 @@
 import { useState } from "react";
 import axios from "../utils/axios";
 import { useNavigate, Link } from "react-router-dom";
+import { toast } from "react-toastify";
 
 const Login = () => {
   const navigate = useNavigate();
   const [form, setForm] = useState({ email: "", password: "" });
+  const [loading, setLoading] = useState(false);
 
   const handleChange = (e) => {
     setForm({ ...form, [e.target.name]: e.target.value });
@@ -12,16 +14,19 @@ const Login = () => {
 
   const handleSubmit = async (e) => {
     e.preventDefault();
+    setLoading(true)
     try {
       const res = await axios.post("/auth/login", form);
       localStorage.setItem("token", res.data.token);
       localStorage.setItem("user", JSON.stringify(res.data.user));
-      alert("Login successful!");
+      toast.success("Login successful!");
       setForm({ email: "", password: "" });
       // redirect user
       navigate("/posts");
     } catch (err) {
-      alert(err.response?.data?.message || "Login failed");
+      toast.error(err.response?.data?.message || "Login failed");
+    } finally {
+      setLoading(false);
     }
   };
 
@@ -51,8 +56,10 @@ const Login = () => {
               placeholder="Enter your email"
               value={form.email}
               onChange={handleChange}
+              autoComplete="email"
               className="shadow appearance-none border rounded w-full py-2 px-3 text-gray-700 leading-tight focus:outline-none focus:shadow-outline mb-6"
               required
+              disabled={loading}
             />
             <label
               className="block text-gray-700 text-sm font-bold mb-2"
@@ -67,14 +74,41 @@ const Login = () => {
               placeholder="Enter your password"
               value={form.password}
               onChange={handleChange}
+              autoComplete="current-password"
               className="shadow appearance-none border rounded w-full py-2 px-3 text-gray-700 leading-tight focus:outline-none focus:shadow-outline"
               required
+              disabled={loading}
             />
             <button
               type="submit"
-              className="bg-blue-600 text-white py-2 rounded mt-6 cursor-pointer transition ease-in-out hover:bg-blue-800"
+              className={`bg-blue-600 text-white py-2 rounded mt-6 cursor-pointer transition ease-in-out hover:bg-blue-800 flex justify-center items-center ${
+                loading ? "opacity-50 cursor-not-allowed" : ""
+              }`}
+              disabled={loading} // disable button while loading
             >
-              Login
+              {loading ? (
+                <svg
+                  className="animate-spin h-5 w-5 mr-3 text-white"
+                  xmlns="http://www.w3.org/2000/svg"
+                  fill="none"
+                  viewBox="0 0 24 24"
+                >
+                  <circle
+                    className="opacity-25"
+                    cx="12"
+                    cy="12"
+                    r="10"
+                    stroke="currentColor"
+                    strokeWidth="4"
+                  ></circle>
+                  <path
+                    className="opacity-75"
+                    fill="currentColor"
+                    d="M4 12a8 8 0 018-8v8z"
+                  ></path>
+                </svg>
+              ) : null}
+              {loading ? "Logging in..." : "Login"}
             </button>
           </form>
           <p className="mt-4 text-center text-gray-600">

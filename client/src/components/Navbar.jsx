@@ -27,7 +27,7 @@ const Navbar = () => {
   return (
     <nav
       className={`
-      sticky top-0 bg-white text-black flex h-[9vh] w-[95vw] sm:w-[90vw] md:w-[85vw]
+      sticky top-0 bg-white text-black flex h-[5vh] sm:h-[9vh] w-[95vw] sm:w-[90vw] md:w-[85vw]
       rounded-3xl sm:rounded-4xl mx-auto my-2 sm:my-4 justify-between items-center
       z-50 px-3 py-2 sm:px-7 sm:py-4 transition-all duration-300 ease-in-out
       ${scrolled ? "shadow-2xl" : "shadow-none"}`}
@@ -108,7 +108,7 @@ const Navbar = () => {
         {menuOpen && (
           <div
             className="
-              absolute top-[calc(9vh-0.7rem)] right-0 bg-white rounded-b-3xl shadow-md
+              absolute top-[calc(5vh-0.7rem)] right-0 bg-white rounded-b-3xl shadow-md
               flex flex-col gap-4 py-4 px-6 min-w-[140px] z-40
             "
           >

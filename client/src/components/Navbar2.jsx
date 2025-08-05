@@ -34,7 +34,7 @@ const Navbar2 = () => {
   return (
     <nav
       className="
-        sticky top-0 bg-white text-black flex h-[9vh] w-full max-w-[95vw] sm:max-w-[90vw] md:max-w-[85vw]
+        sticky top-0 bg-white text-black flex h-[5vh] sm:h-[9vh] w-full max-w-[95vw] sm:max-w-[90vw] md:max-w-[85vw]
         rounded-3xl sm:rounded-4xl mx-auto my-2 sm:my-4 
         justify-between items-center z-50 shadow-2xl transition-all duration-300 ease-in-out
         px-3 sm:px-7 py-2 sm:py-4
@@ -119,7 +119,7 @@ const Navbar2 = () => {
         {menuOpen && (
           <div
             className="
-              absolute top-[calc(9vh-0.7rem)] right-0 bg-white rounded-b-3xl shadow-md
+              absolute top-[calc(5vh-0.7rem)] right-0 bg-white rounded-b-3xl shadow-md
               flex flex-col gap-4 py-4 px-6 min-w-[140px] max-w-[80vw] z-40
             "
             style={{ boxShadow: "0 10px 15px rgba(0,0,0,0.1)" }}
